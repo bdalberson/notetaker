@@ -3,11 +3,10 @@ const fs = require('fs');
 const app = express();
 const path = require("path");
 const port = process.env.PORT || 3001
-const api = require('./routes/apiroutes.js');
 const util = require('util');
+const db = path.join(__dirname, 'db/db.json');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// app.use("/api",api)
 app.use(express.static("public"))
 // const uuid = require('./helpers/uuid');
 
@@ -30,17 +29,34 @@ app.get('/api/notes',(req,res) => {
       else{
           res.send(data)
       } 
-      })
-  // .then((data) => res.json((data)))
-  
+      })  
 })
 
-app.post("/api/notes/id"), (req,res) => {
-  const newNote = req.body;
-  readFile("db")
-  noteList.push(newNote)
-  res.json(newNote)
-}
+app.post('/api/notes', (req, res) => {
+  const { title, content } = req.body;
+  saveNote(req.body)
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+});
+
+const saveNote = (note) => {
+  // Read the existing notes from the JSON file
+  const existingNotes = JSON.parse(fs.readFileSync(db));
+
+  // Add the new note to the array of notes
+  existingNotes.push(note);
+
+  // Write the updated notes to the JSON file
+  fs.writeFileSync(db, JSON.stringify(existingNotes));
+
+  // Return a promise that resolves when the note has been saved
+  return Promise.resolve();
+};
 
 app.listen(port, () =>
   console.info(`Example app listening at http://localhost:${port} 🚀`)
