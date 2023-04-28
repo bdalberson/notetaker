@@ -14,23 +14,13 @@ const uuid = require('./helpers/uuid');
 
 
 
-app.get('/index', (req, res) =>
-  res.sendFile(path.join(__dirname, '/public/index.html'))
-);
-
-app.get('/notes', (req, res) =>
-  res.sendFile(path.join(__dirname, '/public/notes.html'))
-);
-
-
-
-app.get('/api/notes',(req,res) => {
-  fs.readFile("./db/db.json", "utf-8", (err,data)=>{
-      if (err){console.log(err)}
-      else{
-          res.send(data)
-      } 
-      })  
+app.get('/api/notes', (req, res) => {
+  fs.readFile("./db/db.json", "utf-8", (err, data) => {
+    if (err) { console.log(err) }
+    else {
+      res.send(data)
+    }
+  })
 })
 
 app.post('/api/notes', (req, res) => {
@@ -38,8 +28,8 @@ app.post('/api/notes', (req, res) => {
 
 
   const newNote = {
-    title, 
-   text,
+    title,
+    text,
     id: uuid()
   }
 
@@ -52,6 +42,15 @@ app.post('/api/notes', (req, res) => {
       res.sendStatus(500);
     });
 });
+
+
+app.get('/notes', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
+
+app.get('*', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/index.html'))
+);
 
 const saveNote = (note) => {
   const existingNotes = JSON.parse(fs.readFileSync(db));
