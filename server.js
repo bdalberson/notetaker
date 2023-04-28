@@ -34,12 +34,12 @@ app.get('/api/notes',(req,res) => {
 })
 
 app.post('/api/notes', (req, res) => {
-  const { title, content } = req.body;
+  const { title, text } = req.body;
 
 
   const newNote = {
     title, 
-    text: content,
+   text,
     id: uuid()
   }
 
