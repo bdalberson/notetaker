@@ -8,6 +8,7 @@ const db = path.join(__dirname, 'db/db.json');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"))
+
 const uuid = require('./helpers/uuid');
 
 
@@ -35,6 +36,7 @@ app.get('/api/notes',(req,res) => {
 app.post('/api/notes', (req, res) => {
   const { title, content } = req.body;
 
+
   const newNote = {
     title, 
     text: content,
@@ -52,13 +54,8 @@ app.post('/api/notes', (req, res) => {
 });
 
 const saveNote = (note) => {
-  // Read the existing notes from the JSON file
   const existingNotes = JSON.parse(fs.readFileSync(db));
-
-  // Add the new note to the array of notes
   existingNotes.push(note);
-
-  // Write the updated notes to the JSON file
   fs.writeFileSync(db, JSON.stringify(existingNotes));
 
   // Return a promise that resolves when the note has been saved
