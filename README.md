@@ -1,55 +1,104 @@
 # notetaker
 
-Your challenge is to create an application called Note Taker that can be used to write and save notes. This application will use an Express.js back end and will save and retrieve note data from a JSON file.
 
-The application’s front end has already been created. It's your job to build the back end, connect the two, and then deploy the entire application to Heroku.
+| Technology Used         | Resource URL           | 
+| ------------- |:-------------:| 
+| Git | [https://git-scm.com/](https://git-scm.com/)     |    
+| JavaScript | [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)     
+| Node.JS| [https://developer.mozilla.org/en-US/docs/Glossary/Node.js?utm_source=wordpress%20blog&utm_medium=content%20link&utm_campaign=promote%20mdn](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)    
+| Heroku |:https://id.heroku.com/:| 
+| UUID |:https://www.npmjs.com/package/uuid:| 
 
-important
-Make sure to clone the starter code repository and make your own repository with the starter code. Do not fork the starter code repository!
+## Description 
+[Visit the Deployed Site](https://guarded-depths-68124.herokuapp.com/)
 
-Before you start, clone the starter code.
+This is a note taking app.  This will allow you to create sticky notes for saving and keeping track of tasks.  Hope you find it useful. 
 
-User Story
-AS A small business owner
-I WANT to be able to write and save notes
-SO THAT I can organize my thoughts and keep track of tasks I need to complete
-Acceptance Criteria
-GIVEN a note-taking application
-WHEN I open the Note Taker
-THEN I am presented with a landing page with a link to a notes page
-WHEN I click on the link to the notes page
-THEN I am presented with a page with existing notes listed in the left-hand column, plus empty fields to enter a new note title and the note’s text in the right-hand column
-WHEN I enter a new note title and the note’s text
-THEN a Save icon appears in the navigation at the top of the page
-WHEN I click on the Save icon
-THEN the new note I have entered is saved and appears in the left-hand column with the other existing notes
-WHEN I click on an existing note in the list in the left-hand column
-THEN that note appears in the right-hand column
-WHEN I click on the Write icon in the navigation at the top of the page
-THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column
-Mock-Up
-The following images show the web application's appearance and functionality:
 
-Existing notes are listed in the left-hand column with empty fields on the right-hand side for the new note’s title and text.
 
-Note titled “Balance accounts” reads, “Balance account books by end of day Monday,” with other notes listed on the left.
+## Code Refactor Example
 
-Getting Started
-The application should have a db.json file on the back end that will be used to store and retrieve notes using the fs module.
 
-The following HTML routes should be created:
+Below is the route for notes for when recreating a new note, adds in the title, text and adds a new UUID and saves it to the json Database 
 
-GET /notes should return the notes.html file.
+```node.js
 
-GET * should return the index.html file.
 
-The following API routes should be created:
 
-GET /api/notes should read the db.json file and return all saved notes as JSON.
+app.post('/api/notes', (req, res) => {
+  const { title, text } = req.body;
 
-POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
+  const newNote = {
+    title,
+    text,
+    id: uuid()
+  }
 
-Bonus
-You haven’t learned how to handle DELETE requests, but this application has that functionality in the front end. As a bonus, see if you can add the DELETE route to the application using the following guideline:
+  saveNote(newNote)
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+});
 
-DELETE /api/notes/:id should receive a query parameter containing the id of a note to delete. In order to delete a note, you'll need to read all notes from the db.json file, remove the note with the given id property, and then rewrite the notes to the db.json file.
+
+Below is notes note for displaying the db text on the screen
+``` JavaScript
+
+app.get('/api/notes', (req, res) => {      
+  fs.readFile("./db/db.json", "utf-8", (err, data) => {
+    if (err) { console.log(err) }
+    else {
+      res.send(data)
+    }
+  })
+})
+
+
+Blow is the code for writing to the file. I believe I could have used to util function to handle the promise callback actions but I couldn't figure it out.
+
+``` Javascript
+
+
+const saveNote = (note) => {
+  const existingNotes = JSON.parse(fs.readFileSync(db));
+  existingNotes.push(note);
+  fs.writeFileSync(db, JSON.stringify(existingNotes));
+
+  // Return a promise that resolves when the note has been saved
+  return Promise.resolve();
+};
+
+
+
+## Usage 
+
+This is a fully deployed app running on Heroku.  All you need to do is go to  https://guarded-depths-68124.herokuapp.com/ and see for yourself.😈  
+
+
+## Learning Points 
+
+
+OH EM GEE.  This was so hard to get running and off the ground.  So many times I was just staring at a blank page unsure of where to get BEGIN so getting to this point gives me some confidence going forward.  First time deploying to Heroku!  I'm an app launcher now.  I struggled a lot trying to get the app(re,res) syntax down.  I'm still struggling to understand when and why to stringify things or parse them and a lot of the writing functions. 
+
+
+## Author Info
+
+SWEngineer from CA, I love videogames, music and family lol. 
+
+* [Portfolio](https://bdalberson.github.io/Course2Biopage/)
+* [LinkedIn](https://www.linkedin.com/in/brian-alberson-swe/)
+* [Github](https://github.com/bdalberson)
+```
+
+## Credits
+
+Study groups, TAs, and tutoring all crucial here. Also thanks to the family for keeping me sane and doing the dishes. 
+
+---
+
+## Tests
+Didn't write any this time.
