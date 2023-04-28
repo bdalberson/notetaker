@@ -8,7 +8,7 @@ const db = path.join(__dirname, 'db/db.json');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"))
-// const uuid = require('./helpers/uuid');
+const uuid = require('./helpers/uuid');
 
 
 
@@ -34,7 +34,14 @@ app.get('/api/notes',(req,res) => {
 
 app.post('/api/notes', (req, res) => {
   const { title, content } = req.body;
-  saveNote(req.body)
+
+  const newNote = {
+    title, 
+    text: content,
+    id: uuid()
+  }
+
+  saveNote(newNote)
     .then(() => {
       res.sendStatus(200);
     })
